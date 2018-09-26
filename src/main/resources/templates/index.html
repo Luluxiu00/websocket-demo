@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Title</title>
+<script
+	th:src="@{{path}/static/js/jquery-1.8.0.min.js(path=${contextPath})}"></script>
+</head>
+<body>
+	<center>
+		<h1>WebSocket 测试</h1>
+		<div>
+			<button id="btnConnection">连接socket</button>
+			<button id="btnClose">断开socket</button>
+		</div>
+		<br />
+		<div>
+			<label>编辑</label> <input type="text" id="context" />
+			<button id="btnSend">发送</button>
+		</div>
+		<br />
+		<div>
+			<label>收到的信息:</label> <br />
+			<textarea id="recMsg" rows="10" cols="40" />
+		</div>
+	</center>
+
+</body>
+<script type="text/javascript">
+	var socket;
+	if (typeof (WebSocket) == "undefined") {
+		alert("您的浏览器不支持WebSocket");
+	}
+
+	$("#btnConnection").click(function() {
+		//实现化WebSocket对象，指定要连接的服务器地址与端口
+		socket = new WebSocket("ws://127.0.0.1:8088/websocket/18888888888");
+		//打开事件
+		socket.onopen = function() {
+			console.log("Socket 已打开");
+		};
+		//获得消息事件
+		socket.onmessage = function(msg) {
+			var data =  msg.data
+			console.log("收到来自服务端的消息: " + data);
+			var msg = $("#recMsg").val();
+			
+			if(msg){
+				msg = msg + "\r\n" + data;
+				$("#recMsg").val(msg);
+			}else{
+				$("#recMsg").val(data);
+			}
+		};
+		//关闭事件
+		socket.onclose = function() {
+			console.log("Socket已关闭");
+		};
+		//发生了错误事件
+		socket.onerror = function() {
+		console.log("发生了错误");
+		}
+	});
+
+	//发送消息
+	$("#btnSend").click(function() {
+		if(socket){
+			var msg = $("#context").val();
+			socket.send(msg + " " + formatDate(new Date()));
+		}else{
+			console.log("socket未连接,无法发送信息");
+		}
+	});
+
+	//关闭
+	$("#btnClose").click(function() {
+		socket.close();
+	});
+	
+	
+	
+	function formatDate(time){
+	    var date = new Date(time);
+
+	    var year = date.getFullYear(),
+	        month = date.getMonth() + 1,//月份是从0开始的
+	        day = date.getDate(),
+	        hour = date.getHours(),
+	        min = date.getMinutes(),
+	        sec = date.getSeconds();
+	    var newTime = year + '-' +
+	                month + '-' +
+	                day + ' ' +
+	                hour + ':' +
+	                min + ':' +
+	                sec;
+	    return newTime;         
+	}
+	</script>
+</html>

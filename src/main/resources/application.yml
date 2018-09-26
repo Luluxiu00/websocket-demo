@@ -1,0 +1,45 @@
+server:
+  port: 8088
+  tomcat: 
+    max-threads: 10
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=UTF-8
+    username: root
+    password: olmysoft
+    driver-class-name: com.mysql.jdbc.Driver
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    cache: false
+  mvc:
+    static-path-pattern: /static/**
+  resources:
+    static-locations:
+    - classpath:/static/
+    
+  devtools: #热启动
+    restart:
+      additional-paths: src/main/java
+      exclude: static/**,public/**
+
+mybatis:
+  mapper-locations: classpath:com/example/demo/dao/mapper/*.xml
+mapper:
+    mappers: com.example.demo.util.MyMapper
+    not-empty: false
+    identity: MYSQL
+pagehelper:
+  helper-dialect: mysql
+  reasonable: false
+  supportMethodsArguments: true
+  params: count=countSql
+
+
+logging:
+  level:
+    com: 
+      example: 
+        demo: DEBUG
+
